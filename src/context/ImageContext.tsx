@@ -11,10 +11,42 @@ const ImageContext = createContext<ImageContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'ansh_mehndi_real_photos_v1';
 
+// Safe storage access helper to prevent crashes in private browsing or restricted iframes
+const safeGetItem = (key: string): string | null => {
+  try {
+    if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage) {
+      return window.localStorage.getItem(key);
+    }
+  } catch {
+    // Access denied / Private mode / security restriction
+  }
+  return null;
+};
+
+const safeSetItem = (key: string, value: string): void => {
+  try {
+    if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage) {
+      window.localStorage.setItem(key, value);
+    }
+  } catch {
+    // Quota exceeded or storage blocked
+  }
+};
+
+const safeRemoveItem = (key: string): void => {
+  try {
+    if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage) {
+      window.localStorage.removeItem(key);
+    }
+  } catch {
+    // Ignore
+  }
+};
+
 export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [images, setImages] = useState<Record<string, string>>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = safeGetItem(STORAGE_KEY);
       return saved ? JSON.parse(saved) : {};
     } catch {
       return {};
@@ -23,9 +55,9 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
+      safeSetItem(STORAGE_KEY, JSON.stringify(images));
     } catch {
-      // storage quota or private browsing safeguard
+      // Safeguard
     }
   }, [images]);
 
@@ -43,11 +75,7 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const resetAllImages = () => {
     setImages({});
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // ignore
-    }
+    safeRemoveItem(STORAGE_KEY);
   };
 
   return (

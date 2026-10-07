@@ -4,8 +4,8 @@ import { BUSINESS_INFO, MEHNDI_CATEGORIES } from '../data/mehndiData';
 import { ImageSlot } from './ImageSlot';
 
 export const BridalSpotlight: React.FC = () => {
-  const legBridal = MEHNDI_CATEGORIES.find((c) => c.id === 'leg-mehndi-bridal')!;
-  const customBridal = MEHNDI_CATEGORIES.find((c) => c.id === 'customized-bridal-mehndi')!;
+  const legBridal = MEHNDI_CATEGORIES.find((c) => c.id === 'leg-mehndi-bridal') || MEHNDI_CATEGORIES[0];
+  const customBridal = MEHNDI_CATEGORIES.find((c) => c.id === 'customized-bridal-mehndi') || MEHNDI_CATEGORIES[1];
 
   return (
     <section className="relative py-20 bg-royal-gradient text-white overflow-hidden">

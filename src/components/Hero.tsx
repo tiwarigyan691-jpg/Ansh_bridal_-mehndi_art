@@ -14,7 +14,7 @@ export const Hero: React.FC = () => {
     images['hero-primary'] ||
     images['slot-customized-bridal-mehndi'] ||
     images['slot-leg-mehndi-bridal'] ||
-    images[activeCategory.slotId];
+    (activeCategory ? images[activeCategory.slotId] : undefined);
 
   return (
     <section
